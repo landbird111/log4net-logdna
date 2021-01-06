@@ -1,11 +1,11 @@
+using log4net.Core;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using log4net.Core;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace log4net.logdna
 {
@@ -13,6 +13,7 @@ namespace log4net.logdna
     {
         private readonly Config _config;
         private readonly Process _currentProcess;
+
         private readonly JsonSerializer _jsonSerializer = JsonSerializer.CreateDefault(new JsonSerializerSettings
         {
             PreserveReferencesHandling = PreserveReferencesHandling.Arrays,
@@ -89,18 +90,6 @@ namespace log4net.logdna
 
         private void AddContextProperties(JObject loggingInfo, LoggingEvent loggingEvent)
         {
-            if (_config.GlobalContextKeys != null)
-            {
-                var globalContextProperties = _config.GlobalContextKeys.Split(',');
-                foreach (var key in globalContextProperties)
-                {
-                    if (TryGetPropertyValue(GlobalContext.Properties[key], out var propertyValue))
-                    {
-                        loggingInfo[key] = JToken.FromObject(propertyValue);
-                    }
-                }
-            }
-
             var threadContextProperties = ThreadContext.Properties.GetKeys();
             if (threadContextProperties != null && threadContextProperties.Any())
             {
@@ -112,8 +101,6 @@ namespace log4net.logdna
                     }
                 }
             }
-
-            
 
             if (loggingEvent.Properties.Count > 0)
             {

@@ -101,14 +101,6 @@ namespace log4net.logdna
             set => _config.Tag = value;
         }
 
-        
-
-        public string GlobalContextKeys
-        {
-            get => _config.GlobalContextKeys;
-            set => _config.GlobalContextKeys = value;
-        }
-
         public int BufferSize
         {
             get => _config.BufferSize;

@@ -198,42 +198,6 @@ namespace log4net_logdna.UnitTests
         }
 
         [Fact]
-        public void ShouldSerializeGlobalThreadContextProperties()
-        {
-            var evt = _fixture.Create<LoggingEvent>();
-
-            PopulateSixContextProperties(GlobalContext.Properties);
-
-            var instance = new LogdnaFormatter(new Config
-            {
-                GlobalContextKeys = "Key1,Key2,Key3,Key4,Key5"
-            });
-
-            var result = instance.ToJson(evt, evt.RenderedMessage);
-            dynamic json = JObject.Parse(result);
-
-            VerifyContextPropertiesInJson(json);
-        }
-
-        [Fact]
-        public void ShouldSerializeLogicalThreadContextProperties()
-        {
-            var evt = _fixture.Create<LoggingEvent>();
-
-            PopulateSixContextProperties(LogicalThreadContext.Properties);
-
-            var instance = new LogdnaFormatter(new Config
-            {
-                
-            });
-
-            var result = instance.ToJson(evt, evt.RenderedMessage);
-            dynamic json = JObject.Parse(result);
-
-            VerifyContextPropertiesInJson(json);
-        }
-
-        [Fact]
         public void ShouldSerializeTheException()
         {
             // In order to populate the stacktrace.

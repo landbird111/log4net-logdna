@@ -223,52 +223,6 @@ namespace log4net_logdna.UnitTests
         }
 
         [Fact]
-        public void LogContainsSelectedLogicalThreadContextProperties()
-        {
-            LogicalThreadContext.Properties["lkey1"] = "MyValue1";
-            LogicalThreadContext.Properties["lkey2"] = new TestItem { IntProperty = 123, StringProperty = "test string" };
-            LogicalThreadContext.Properties["lkey3"] = "this won't be in the log";
-            // only properties defines in app.config in <logicalThreadContextKeys> will be included
-            var expectedJson = @"
-{
-""lkey1"": ""MyValue1"",
-""lkey2"": {
-    ""StringProperty"": ""test string"",
-    ""IntProperty"": 123,
-    ""Parent"": null
-  }
-}";
-
-            _log.Info("test message");
-
-            var message = WaitForSentMessage();
-            message.ExtraProperties.Should().BeEquivalentTo(JObject.Parse(expectedJson));
-        }
-
-        [Fact]
-        public void LogContainsSelectedGlobalContextProperties()
-        {
-            GlobalContext.Properties["gkey1"] = "MyValue1";
-            GlobalContext.Properties["gkey2"] = new TestItem { IntProperty = 123, StringProperty = "test string" };
-            GlobalContext.Properties["gkey3"] = "this won't be in the log";
-            // only properties defines in app.config in <globalContextKeys> will be included
-            var expectedJson = @"
-{
-""gkey1"": ""MyValue1"",
-""gkey2"": {
-    ""StringProperty"": ""test string"",
-    ""IntProperty"": 123,
-    ""Parent"": null
-  }
-}";
-
-            _log.Info("test message");
-
-            var message = WaitForSentMessage();
-            message.ExtraProperties.Should().BeEquivalentTo(JObject.Parse(expectedJson));
-        }
-
-        [Fact]
         public void LogContainsThreadContextStacks()
         {
             using (ThreadContext.Stacks["TestStack1"].Push("TestStackValue1"))

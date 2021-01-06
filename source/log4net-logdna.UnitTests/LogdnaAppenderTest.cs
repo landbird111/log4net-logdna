@@ -51,7 +51,6 @@ namespace log4net_logdna.UnitTests
             appender.RootUrl = "root-url";
             appender.BufferSize = 123;
             appender.CustomerToken = "test-token";
-            appender.GlobalContextKeys = "global-keys";
             appender.NumberOfInnerExceptions = 123;
             appender.Tag = "test-tag";
             appender.SendInterval = TimeSpan.FromSeconds(123);
@@ -63,7 +62,6 @@ namespace log4net_logdna.UnitTests
                 RootUrl = "root-url",
                 BufferSize = 123,
                 CustomerToken = "test-token",
-                GlobalContextKeys = "global-keys",
                 NumberOfInnerExceptions = 123,
                 Tag = "test-tag",
                 SendInterval = TimeSpan.FromSeconds(123),
