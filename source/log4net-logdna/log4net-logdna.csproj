@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <DebugType>full</DebugType>
+    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>9.1.0</Version>
+    <Authors>Reck</Authors>
+    <Company></Company>
+    <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <Product>Logdna</Product>
+    <PackageProjectUrl>http://github.com/landbird111/log4net-logdna</PackageProjectUrl>
+    <Description>Custom log4net Appender to send logs to Logdna</Description>
+    <PackageReleaseNotes>- fork from log4net-loggy to log4net-logdna</PackageReleaseNotes>
+    <Copyright>Copyright 2021</Copyright>
+    <PackageTags>Logdna-log4net log4net appender logs</PackageTags>
+    <RootNamespace>log4net.logdna</RootNamespace>
+    <PackageId>log4net-logdna</PackageId>
+    <AssemblyName>log4net-logdna</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="chocolatey" Version="0.10.14" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>

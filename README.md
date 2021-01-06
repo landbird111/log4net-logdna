@@ -1,15 +1,15 @@
-log4net-loggly
+log4net-logdn
 ==============
 
-Custom log4net appenders for importing logging events to loggly. It’s asynchronous and will send logs in the background without blocking your application. Check out Loggly's [.Net logging documentation](https://www.loggly.com/docs/net-logs/) to learn more.
+Custom log4net appenders for importing logging events to logdna. It’s asynchronous and will send logs in the background without blocking your application. Check out Logdna's [.Net logging documentation](https://www.logdna.com/docs/net-logs/) to learn more.
 
 **Note:** This library supports both .NET 4.0 and .NET Standard 2.0. Please see the section **[.NET Core Support](README.md#net-core-support)** below.
 
-Download log4net-loggly package from NuGet. Use the following command.
+Download log4net-logdna package from NuGet. Use the following command.
 
-    Install-Package log4net-loggly
+    Install-Package log4net-logdna
 
-Add the following code in your web.config to configure LogglyAppender in your application
+Add the following code in your web.config to configure LogdnaAppender in your application
 ```xml
 <configSections>
     <section name="log4net" type="log4net.Config.Log4NetConfigurationSectionHandler, log4net" />
@@ -17,23 +17,15 @@ Add the following code in your web.config to configure LogglyAppender in your ap
 <log4net>
     <root>
         <level value="ALL" />
-        <appender-ref ref="LogglyAppender" />
+        <appender-ref ref="LogdnaAppender" />
     </root>
-    <appender name="LogglyAppender" type="log4net.loggly.LogglyAppender, log4net-loggly">
-        <rootUrl value="https://logs-01.loggly.com/" />
+    <appender name="LogdnaAppender" type="log4net.logdna.LogdnaAppender, log4net-logdna">
+        <rootUrl value="https://www.logdna.com/" />
         <customerToken value="your-customer-token" />
         <tag value="your-custom-tags,separated-by-comma" />
-        <logicalThreadContextKeys value="lkey1,lkey2" /> <!-- optional -->
-        <globalContextKeys value="gkey1,gkey2" /> <!-- optional -->
     </appender>
 </log4net>
 ```
-
-If you want to append **GlobalContext** and/or **LogicalThreadContext** properties to your log you need to define the list of context properties in the configuration. 
-
-For GlobalContext Properties use `<globalContextKeys value="gkey1,gkey2" />`
-
-For LogicalThreadContext Properties `<logicalThreadContextKeys value="lkey1,lkey2" />`
 
 
 You can also use **layout** to render logs according to your Pattern Layouts
@@ -58,7 +50,7 @@ Create an object of the Log class using LogManager
 var logger = LogManager.GetLogger(typeof(Class));
 ```
     
-Send logs to Loggly using the following code
+Send logs to Logdna using the following code
 ```csharp
 // send plain string
 logger.Info("log message");
@@ -67,8 +59,8 @@ logger.Info("log message");
 logger.Error("your log message", new Exception("your exception message"));
 
 // send dictionary as JSON object
-var items = new Dictionary<string,string>();
-items.Add("key1","value1");
+var items = new Dictionary<string, string>();
+items.Add("key1", "value1");
 items.Add("key2", "value2");
 logger.Info(items);
 
@@ -78,7 +70,7 @@ logger.Debug(new { Property = "This is anonymous object", Property2 = "with two 
 
 ## Flushing logs on application shutdown
 
-Library is buffering and sending log messages to Loggly asynchronously in the background. That means that some logs may be still in buffer when the application terminates. To make sure that all logs have been sent you need to cleanly shutdown log4net logger using the following code:
+Library is buffering and sending log messages to Logdna asynchronously in the background. That means that some logs may be still in buffer when the application terminates. To make sure that all logs have been sent you need to cleanly shutdown log4net logger using the following code:
 ```csharp
 logger.Logger.Repository.Shutdown();
 ```
@@ -113,16 +105,16 @@ dotnet new console -o Application_Name
 
 The **dotnet** command creates a new application of type **console** for you. The **-o** parameter creates a directory named **Application_Name** where your app is stored, and populates it with the required files.
 
-- If you are using **Visual Studio 2017 IDE** then you have to install the package **log4net-loggly** into your project from **NuGet** by running the command on **Package Manager Console** as shown below-
+- If you are using **Visual Studio 2017 IDE** then you have to install the package **log4net-logdna** into your project from **NuGet** by running the command on **Package Manager Console** as shown below-
 
 ```
-Install-Package log4net-loggly
+Install-Package log4net-logdna
 ```
 
-- If you are using **Visual Studio Code** then run the below command on the terminal to install the **log4net-loggly** package.
+- If you are using **Visual Studio Code** then run the below command on the terminal to install the **log4net-logdna** package.
 
 ```
-dotnet add package log4net-loggly
+dotnet add package log4net-logdna
 ```
 
 - Now when you create an applicaton in .NET Core, there is no App.config file exist already in the project so you have to create one.
@@ -131,7 +123,7 @@ dotnet add package log4net-loggly
 
   (b) For **Visual Studio Code** users, you should simply create the same configuration file on the the folder structure where your another files exists.
 
-- You should simply add the below configuration code in your App.config file to configure LogglyAppender in your application. Make sure the **configSections** block is the first element of the configuration in app.config. This is a requirement set by .NET.
+- You should simply add the below configuration code in your App.config file to configure LogdnaAppender in your application. Make sure the **configSections** block is the first element of the configuration in app.config. This is a requirement set by .NET.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -142,14 +134,12 @@ dotnet add package log4net-loggly
   <log4net>
     <root>
       <level value="ALL" />
-      <appender-ref ref="LogglyAppender" />
+      <appender-ref ref="LogdnaAppender" />
     </root>
-    <appender name="LogglyAppender" type="log4net.loggly.LogglyAppender, log4net-loggly">
-      <rootUrl value="https://logs-01.loggly.com/" />
+    <appender name="LogdnaAppender" type="log4net.logdna.LogdnaAppender, log4net-logdna">
+      <rootUrl value="https://logs-01.logdna.com/" />
       <customerToken value="your-customer-token" />
       <tag value="your-custom-tags-separated-by-comma" />
-      <logicalThreadContextKeys value="lkey1,lkey2" /> <!-- optional -->
-      <globalContextKeys value="gkey1,gkey2" /> <!-- optional -->
     </appender>
   </log4net>
 </configuration>
@@ -185,4 +175,4 @@ If you are using **Visual Studio Code** then you have to run the below command o
 dotnet run
 ```
 
-And that's it. After doing this, you will see your .NET Core application logs flowing into Loggly.
+And that's it. After doing this, you will see your .NET Core application logs flowing into Logdna.
