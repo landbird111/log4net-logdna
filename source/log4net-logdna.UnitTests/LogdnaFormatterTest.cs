@@ -224,7 +224,7 @@ namespace log4net_logdna.UnitTests
 
             var instance = new LogdnaFormatter(new Config
             {
-                LogicalThreadContextKeys = "Key1,Key2,Key3,Key4,Key5"
+                
             });
 
             var result = instance.ToJson(evt, evt.RenderedMessage);

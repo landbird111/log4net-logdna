@@ -13,7 +13,6 @@ namespace log4net.logdna
             TimeoutInSeconds = 30;
             MaxSendRetries = 3;
             Tag = "log4net";
-            LogicalThreadContextKeys = null;
             GlobalContextKeys = null;
             BufferSize = 500;
             NumberOfInnerExceptions = 4;
@@ -54,10 +53,6 @@ namespace log4net.logdna
         /// Tag or tags separated by commas
         /// </summary>
         public string Tag { get; set; }
-        /// <summary>
-        /// Comma separated list of keys to LogicalThreadContext whose values will be added to log.
-        /// </summary>
-        public string LogicalThreadContextKeys { get; set; }
         /// <summary>
         /// Comma separated list of keys to GlobalContext whose values will be added to log.
         /// </summary>

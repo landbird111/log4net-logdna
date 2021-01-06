@@ -101,11 +101,7 @@ namespace log4net.logdna
             set => _config.Tag = value;
         }
 
-        public string LogicalThreadContextKeys
-        {
-            get => _config.LogicalThreadContextKeys;
-            set => _config.LogicalThreadContextKeys = value;
-        }
+        
 
         public string GlobalContextKeys
         {

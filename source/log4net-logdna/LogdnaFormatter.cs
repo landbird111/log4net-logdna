@@ -113,17 +113,7 @@ namespace log4net.logdna
                 }
             }
 
-            if (_config.LogicalThreadContextKeys != null)
-            {
-                var logicalThreadContextProperties = _config.LogicalThreadContextKeys.Split(',');
-                foreach (var key in logicalThreadContextProperties)
-                {
-                    if (TryGetPropertyValue(LogicalThreadContext.Properties[key], out var propertyValue))
-                    {
-                        loggingInfo[key] = JToken.FromObject(propertyValue);
-                    }
-                }
-            }
+            
 
             if (loggingEvent.Properties.Count > 0)
             {
