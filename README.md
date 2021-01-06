@@ -1,4 +1,4 @@
-log4net-logdn
+log4net-logdna
 ==============
 
 Custom log4net appenders for importing logging events to logdna. It’s asynchronous and will send logs in the background without blocking your application. Check out Logdna's [.Net logging documentation](https://www.logdna.com/docs/net-logs/) to learn more.
@@ -20,7 +20,7 @@ Add the following code in your web.config to configure LogdnaAppender in your ap
         <appender-ref ref="LogdnaAppender" />
     </root>
     <appender name="LogdnaAppender" type="log4net.logdna.LogdnaAppender, log4net-logdna">
-        <rootUrl value="https://www.logdna.com/" />
+        <rootUrl value="https://logs.logdna.com/" />
         <customerToken value="your-customer-token" />
         <tag value="your-custom-tags,separated-by-comma" />
     </appender>
@@ -137,7 +137,7 @@ dotnet add package log4net-logdna
       <appender-ref ref="LogdnaAppender" />
     </root>
     <appender name="LogdnaAppender" type="log4net.logdna.LogdnaAppender, log4net-logdna">
-      <rootUrl value="https://logs-01.logdna.com/" />
+      <rootUrl value="https://logs.logdna.com/" />
       <customerToken value="your-customer-token" />
       <tag value="your-custom-tags-separated-by-comma" />
     </appender>
