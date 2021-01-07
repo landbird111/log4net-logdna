@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\log4net-loggly\log4net-logdna.csproj" />
+    <ProjectReference Include="..\log4net-logdna\log4net-logdna.csproj" />
   </ItemGroup>
 
 </Project>

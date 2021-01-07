@@ -119,6 +119,18 @@ namespace log4net.logdna
             set => _config.NumberOfInnerExceptions = value;
         }
 
+        public string App
+        {
+            get => _config.App;
+            set => _config.App = value;
+        }
+
+        public string Env
+        {
+            get => _config.Env;
+            set => _config.Env = value;
+        }
+
         #endregion Configuration properties
     }
 }

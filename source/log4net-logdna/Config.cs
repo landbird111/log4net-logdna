@@ -14,6 +14,8 @@ namespace log4net.logdna
             MaxSendRetries = 3;
             Tag = "log4net";
             BufferSize = 500;
+            App = "CustomApp";
+            Env = "prod";
             NumberOfInnerExceptions = 4;
             SendInterval = TimeSpan.FromSeconds(5);
             MaxLogQueueSize = 0; // unlimited
@@ -80,5 +82,13 @@ namespace log4net.logdna
         /// How many times library tries to send logs to Logdna before giving up and trying next batch.
         /// </summary>
         public int MaxSendRetries { get; set; }
+        /// <summary>
+        /// app view
+        /// </summary>
+        public string App { get; set; }
+        /// <summary>
+        /// dev/prod
+        /// </summary>
+        public string Env { get; set; }
     }
 }

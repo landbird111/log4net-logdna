@@ -198,6 +198,42 @@ namespace log4net_logdna.UnitTests
         }
 
         [Fact]
+        public void ShouldSerializeGlobalContextAppProperties()
+        {
+            var evt = _fixture.Create<LoggingEvent>();
+
+            PopulateSixContextProperties(GlobalContext.Properties);
+
+            var instance = new LogdnaFormatter(new Config
+            {
+                App = "CustomApp"
+            });
+
+            var result = instance.ToJson(evt, evt.RenderedMessage);
+            dynamic json = JObject.Parse(result);
+
+            VerifyContextPropertiesInJson(json);
+        }
+
+        [Fact]
+        public void ShouldSerializeGlobalContextEnvProperties()
+        {
+            var evt = _fixture.Create<LoggingEvent>();
+
+            PopulateSixContextProperties(GlobalContext.Properties);
+
+            var instance = new LogdnaFormatter(new Config
+            {
+                Env = "prod"
+            });
+
+            var result = instance.ToJson(evt, evt.RenderedMessage);
+            dynamic json = JObject.Parse(result);
+
+            VerifyContextPropertiesInJson(json);
+        }
+
+        [Fact]
         public void ShouldSerializeTheException()
         {
             // In order to populate the stacktrace.

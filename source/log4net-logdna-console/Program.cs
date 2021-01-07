@@ -90,10 +90,10 @@ namespace log4net_logdna_console
             log.Info(parent);
 
             log.Debug(@"This
-is
-some
-multiline
-log");
+            is
+            some
+            multiline
+            log");
             log.InfoFormat("Logdna is the best {0} to collect Logs.", "service");
             log.Info(new { type1 = "newcustomtype", value1 = "newcustomvalue" });
             log.Info(new TestObject());
@@ -129,7 +129,8 @@ log");
                 log.Error("Exception", e);
             }
 
-            log.Info("This is the last message. Program will terminate now.");
+            log.Info("This is the last message. Program will terminate now.finished");
+            Console.Read();
             log.Logger.Repository.Shutdown();
         }
     }

@@ -31,13 +31,16 @@ namespace log4net.logdna
             // formatting base logging info
             JObject loggingInfo = new JObject
             {
-                ["timestamp"] = loggingEvent.TimeStamp.ToString(@"yyyy-MM-ddTHH\:mm\:ss.fffzzz"),
                 ["level"] = loggingEvent.Level?.DisplayName,
-                ["hostName"] = Environment.MachineName,
-                ["process"] = _currentProcess.ProcessName,
-                ["threadName"] = loggingEvent.ThreadName,
-                ["loggerName"] = loggingEvent.LoggerName
+                //["timestamp"] = loggingEvent.TimeStamp.ToString(@"yyyy -MM-ddTHH\:mm\:ss.fffzzz"),
+                ["meta"] = new JObject
+                {
+                    ["process"] = _currentProcess.ProcessName,
+                    ["threadName"] = loggingEvent.ThreadName,
+                    ["loggerName"] = loggingEvent.LoggerName
+                }
             };
+            
 
             AddMessageOrObjectProperties(loggingInfo, loggingEvent, renderedMessage);
             AddExceptionIfPresent(loggingInfo, loggingEvent);
@@ -53,12 +56,12 @@ namespace log4net.logdna
             {
                 int bytesOver = eventSize - _config.MaxEventSizeBytes;
                 // ok, we are over, try to look at plain "message" and cut that down if possible
-                if (loggingInfo["message"] != null)
+                if (loggingInfo["line"] != null)
                 {
-                    var fullMessage = loggingInfo["message"].Value<string>();
+                    var fullMessage = loggingInfo["line"].Value<string>();
                     var originalMessageLength = fullMessage.Length;
                     var newMessageLength = Math.Max(0, originalMessageLength - bytesOver);
-                    loggingInfo["message"] = fullMessage.Substring(0, newMessageLength);
+                    loggingInfo["line"] = fullMessage.Substring(0, newMessageLength);
                     bytesOver -= originalMessageLength - newMessageLength;
                 }
 
@@ -90,6 +93,16 @@ namespace log4net.logdna
 
         private void AddContextProperties(JObject loggingInfo, LoggingEvent loggingEvent)
         {
+            if (!string.IsNullOrEmpty(_config.App))
+            {
+                loggingInfo["app"] = _config.App;
+            }
+
+            if (!string.IsNullOrEmpty(_config.Env))
+            {
+                loggingInfo["env"] = _config.Env;
+            }
+
             var threadContextProperties = ThreadContext.Properties.GetKeys();
             if (threadContextProperties != null && threadContextProperties.Any())
             {
@@ -119,7 +132,11 @@ namespace log4net.logdna
             dynamic exceptionInfo = GetExceptionInfo(loggingEvent);
             if (exceptionInfo != null)
             {
-                loggingInfo["exception"] = exceptionInfo;
+                loggingInfo["line"] = string.Format("{0} {1} {2} {3}", 
+                    exceptionInfo["exceptionType"], 
+                    exceptionInfo["exceptionMessage"], 
+                    exceptionInfo["stacktrace"], 
+                    exceptionInfo["innerException"]);
             }
         }
 
@@ -148,7 +165,7 @@ namespace log4net.logdna
                 }
 
                 // plain string, use rendered message
-                loggingInfo["message"] = GetStringFormLog(renderedMessage);
+                loggingInfo["line"] = GetStringFormLog(renderedMessage);
             }
             else if (loggingEvent.MessageObject == null
                     // log4net.Util.SystemStringFormat is object used when someone calls log.*Format(...)
@@ -158,7 +175,7 @@ namespace log4net.logdna
                     // but then it should be already in renderedMessage
                     || (loggingEvent.MessageObject.GetType().FullName?.Contains("StringFormatFormattedMessage") ?? false))
             {
-                loggingInfo["message"] = GetStringFormLog(renderedMessage);
+                loggingInfo["line"] = GetStringFormLog(renderedMessage);
             }
             else
             {

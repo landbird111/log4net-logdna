@@ -41,9 +41,11 @@ namespace log4net_logdna.UnitTests
         {
             var config = new Config
             {
-                RootUrl = "https://logs01.loggly.test",
+                RootUrl = "https://logs.logdna.com/",
                 CustomerToken = "customer-token",
-                Tag = "tag1,tag2",
+                Tag = "log4net-test-logdna",
+                App = "Log4net-logdna",
+                Env = "prod",
                 UserAgent = "user-agent"
             };
             var client = new LogdnaClient(config);

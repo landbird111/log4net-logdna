@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Net;
 using System.Text;
@@ -9,7 +11,6 @@ namespace log4net.logdna
         private readonly Config _config;
         private bool _isTokenValid = true;
         private readonly string _url;
-        private const string BulkPath = "bulk/";
 
         // exposing way how web request is created to allow integration testing
         internal static Func<Config, string, WebRequest> WebRequestFactory = CreateWebRequest;
@@ -22,7 +23,30 @@ namespace log4net.logdna
 
         public void Send(string[] messagesBuffer, int numberOfMessages)
         {
-            string message = string.Join(Environment.NewLine, messagesBuffer, 0, numberOfMessages);
+            var ingests = new
+            {
+                lines = new System.Collections.Generic.List<JObject>()
+            };
+
+            //avoid number of messages more than buffer count
+            if (numberOfMessages > messagesBuffer.Length) numberOfMessages = messagesBuffer.Length;
+
+            for (int i = 0; i < numberOfMessages; i++)
+            {
+                if (CanBeJson(messagesBuffer[i]))
+                {
+                    JObject orgMessage = JObject.Parse(messagesBuffer[i]);
+
+                    ingests.lines.Add(orgMessage);
+                }
+            }
+
+            string message = JsonConvert.SerializeObject(ingests,
+                new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
+
             int currentRetry = 0;
             // setting MaxSendRetries means that we retry forever, we never throw away logs without delivering them
             while (_isTokenValid && (_config.MaxSendRetries < 0 || currentRetry <= _config.MaxSendRetries))
@@ -54,15 +78,31 @@ namespace log4net.logdna
             }
         }
 
+        private bool CanBeJson(string message)
+        {
+            // This loop is about 2x faster than message.TrimStart().StartsWith("{") and about 4x faster than Regex("^\s*\{")
+            foreach (var t in message)
+            {
+                // skip leading whitespaces
+                if (char.IsWhiteSpace(t))
+                {
+                    continue;
+                }
+                // if first character after whitespace is { then this can be a JSON, otherwise not
+                if (t == '{')
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
         private static string BuildUrl(Config config)
         {
-            string tag = config.Tag;
-
-            // keeping userAgent backward compatible
-            if (!string.IsNullOrWhiteSpace(config.UserAgent))
-            {
-                tag = tag + "," + config.UserAgent;
-            }
+            //ref: https://docs.logdna.com/reference#logsingest
 
             StringBuilder sb = new StringBuilder(config.RootUrl);
             if (sb.Length > 0 && sb[sb.Length - 1] != '/')
@@ -70,10 +110,16 @@ namespace log4net.logdna
                 sb.Append("/");
             }
 
-            sb.Append(BulkPath);
-            sb.Append(config.CustomerToken);
-            sb.Append("/tag/");
-            sb.Append(tag);
+            sb.Append("logs/ingest");
+            sb.Append("?");
+            sb.AppendFormat("hostname={0}", Environment.MachineName);
+            //sb.Append("&");
+            //sb.AppendFormat("now={0}", DateTime.Now.ToString(@"yyyy-MM-ddTHH:mm:ss.fff"));
+            //sb.Append("&");
+            //sb.AppendFormat("mac={0}", "");
+            //sb.Append("&");
+            //sb.AppendFormat("ip={0}", "");
+
             return sb.ToString();
         }
 
@@ -99,6 +145,16 @@ namespace log4net.logdna
             request.UserAgent = config.UserAgent;
             request.KeepAlive = true;
             request.ContentType = "application/json";
+
+            #region auth
+
+            String username = "INSERT_INGESTION_KEY";
+            String password = config.CustomerToken;
+            String encoded = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
+            request.Headers.Add("Authorization", "Basic " + encoded);
+
+            #endregion auth
+
             return request;
         }
     }

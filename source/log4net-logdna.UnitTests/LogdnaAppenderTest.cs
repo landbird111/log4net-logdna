@@ -53,6 +53,8 @@ namespace log4net_logdna.UnitTests
             appender.CustomerToken = "test-token";
             appender.NumberOfInnerExceptions = 123;
             appender.Tag = "test-tag";
+            appender.App = "CustomApp";
+            appender.Env = "prod";
             appender.SendInterval = TimeSpan.FromSeconds(123);
             appender.TimeoutInSeconds = 123;
             appender.UserAgent = "user-agent";
@@ -64,6 +66,8 @@ namespace log4net_logdna.UnitTests
                 CustomerToken = "test-token",
                 NumberOfInnerExceptions = 123,
                 Tag = "test-tag",
+                App = "CustomApp",
+                Env = "prod",
                 SendInterval = TimeSpan.FromSeconds(123),
                 TimeoutInSeconds = 123,
                 UserAgent = "user-agent"
