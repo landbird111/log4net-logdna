@@ -119,6 +119,16 @@ namespace log4net.logdna
             //sb.AppendFormat("mac={0}", "");
             //sb.Append("&");
             //sb.AppendFormat("ip={0}", "");
+            if (!string.IsNullOrEmpty(config.Tag))
+            {
+                sb.Append("&");
+#if NET40
+                sb.AppendFormat("tags={0}", WebUtility.HtmlEncode(config.Tag));
+                
+#elif NETSTANDARD2_0
+                sb.AppendFormat("tags={0}", System.Web.HttpUtility.UrlEncode(config.Tag));
+#endif
+            }
 
             return sb.ToString();
         }
