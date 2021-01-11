@@ -21,8 +21,10 @@ Add the following code in your web.config to configure LogdnaAppender in your ap
     </root>
     <appender name="LogdnaAppender" type="log4net.logdna.LogdnaAppender, log4net-logdna">
         <rootUrl value="https://logs.logdna.com/" />
-        <customerToken value="your-customer-token" />
-        <tag value="your-custom-tags,separated-by-comma" />
+        <inputKey value="APIKey" />
+        <tag value="log4net-test-logdna" />
+        <app value="Log4net-logdna" />
+        <env value="prod" />
     </appender>
 </log4net>
 ```
@@ -138,8 +140,10 @@ dotnet add package log4net-logdna
     </root>
     <appender name="LogdnaAppender" type="log4net.logdna.LogdnaAppender, log4net-logdna">
       <rootUrl value="https://logs.logdna.com/" />
-      <customerToken value="your-customer-token" />
-      <tag value="your-custom-tags-separated-by-comma" />
+      <inputKey value="APIKey" />
+      <tag value="log4net-test-logdna" />
+      <app value="Log4net-logdna" />
+      <env value="prod" />
     </appender>
   </log4net>
 </configuration>
