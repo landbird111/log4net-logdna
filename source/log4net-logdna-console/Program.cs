@@ -130,8 +130,58 @@ namespace log4net_logdna_console
             }
 
             log.Info("This is the last message. Program will terminate now.finished");
-            Console.Read();
+
+            //有值的輸出
+            Dictionary<string, string> testDic = new Dictionary<string, string>();
+            testDic.Add("require", "true");
+            testDic.Add("baseUri", "https://abcd.com");
+            log.Info(testDic);
+
+            //空值的輸出
+            Dictionary<string, string> emptyDic = new Dictionary<string, string>();
+            log.Info(emptyDic);
+
+            //數值的輸出
+            Dictionary<int, string> intDic = new Dictionary<int, string>();
+            intDic.Add(1, "testData");
+            intDic.Add(2, "testBBB");
+            log.Info(intDic);
+
+            //類別的輸出
+            Dictionary<string, Person> personDic = new Dictionary<string, Person>();
+            personDic.Add("man1", new Person { Name = "Man" });
+            personDic.Add("man2", new Person { Name = "ManMan" });
+            log.Info(personDic);
+
+            //清單的輸出
+            List<string> tmpList = new List<string>();
+            tmpList.Add("List1");
+            tmpList.Add("List2");
+            log.Warn(tmpList);
+
+            //數值清單的輸出
+            List<int> tmpIntList = new List<int>();
+            Random intRnd = new Random(DateTime.Now.Millisecond);
+            for (int i = 0; i < 3; i++)
+            {
+                tmpIntList.Add(intRnd.Next(1, 300000));
+            }
+            log.Debug(tmpIntList);
+
+            //類別清單的輸出
+            List<Person> personList = new List<Person>();
+            personList.Add(new Person { Name = "first Person" });
+            personList.Add(new Person { Name = "second Person" });
+            log.Warn(personList);
+
+            //Json output
+            log.Debug("{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.RunningTask>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.RunningTask\",\"No\":0,\"TaskId\":2567,\"Stake\":0,\"Stage\":\"FT\",\"ScoreType\":\"GOALS\",\"MarketType\":\"OU\",\"BetCount\":0,\"TaskMappings\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskMapping>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskMapping\",\"Website\":\"SINGBET\",\"League\":\"Arena Cup (In Croatia)\",\"GameTime\":\"2021-01-13T06:00:00\",\"HomeTeam\":\"NK Medimurje\",\"AwayTeam\":\"HNK Sibenik\",\"Choice\":\"\"}]},\"TaskLines\":null,\"BetSummaryList\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskBetSummary>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskBetSummary\",\"BetType\":\"UNDER\",\"Line\":3.5,\"ConfirmedStake\":287,\"PendingStake\":0,\"AveragePrice\":0.7}]}},{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.RunningTask\",\"No\":0,\"TaskId\":2569,\"Stake\":0,\"Stage\":\"FT\",\"ScoreType\":\"GOALS\",\"MarketType\":\"OU\",\"BetCount\":0,\"TaskMappings\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskMapping>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskMapping\",\"Website\":\"SINGBET\",\"League\":\"EFootball - Battle - 8 Mins Play\",\"GameTime\":\"2021-01-13T02:42:00\",\"HomeTeam\":\"Atalanta  Esports\",\"AwayTeam\":\"AC Milan  Esports\",\"Choice\":\"\"}]},\"TaskLines\":null,\"BetSummaryList\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskBetSummary>\",\"$values\":[]}},{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.RunningTask\",\"No\":0,\"TaskId\":2568,\"Stake\":0,\"Stage\":\"FT\",\"ScoreType\":\"GOALS\",\"MarketType\":\"OU\",\"BetCount\":0,\"TaskMappings\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskMapping>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskMapping\",\"Website\":\"SINGBET\",\"League\":\"EFootball - FIFA 21 CLA Europa League - 10 Mins Play\",\"GameTime\":\"2021-01-13T02:28:00\",\"HomeTeam\":\"AZ Alkmaar  Esports\",\"AwayTeam\":\"Celtic  Esports\",\"Choice\":\"\"}]},\"TaskLines\":null,\"BetSummaryList\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskBetSummary>\",\"$values\":[]}}]}");
+
+
             log.Logger.Repository.Shutdown();
+
+            Console.WriteLine("done");
+            Console.Read();
         }
     }
 }

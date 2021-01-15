@@ -40,9 +40,9 @@ namespace log4net.logdna
                     ["loggerName"] = loggingEvent.LoggerName
                 }
             };
-            
 
             AddMessageOrObjectProperties(loggingInfo, loggingEvent, renderedMessage);
+
             AddExceptionIfPresent(loggingInfo, loggingEvent);
             AddContextProperties(loggingInfo, loggingEvent);
 
@@ -132,10 +132,10 @@ namespace log4net.logdna
             dynamic exceptionInfo = GetExceptionInfo(loggingEvent);
             if (exceptionInfo != null)
             {
-                loggingInfo["line"] = string.Format("{0} {1} {2} {3}", 
-                    exceptionInfo["exceptionType"], 
-                    exceptionInfo["exceptionMessage"], 
-                    exceptionInfo["stacktrace"], 
+                loggingInfo["line"] = string.Format("{0} {1} {2} {3}",
+                    exceptionInfo["exceptionType"],
+                    exceptionInfo["exceptionMessage"],
+                    exceptionInfo["stacktrace"],
                     exceptionInfo["innerException"]);
             }
         }
@@ -149,18 +149,29 @@ namespace log4net.logdna
                     // try parse as JSON, otherwise use rendered message passed to this method
                     try
                     {
+                        //get meta data
+                        JObject joMeta = loggingInfo["meta"] as JObject;
+
                         var json = JObject.Parse(messageString);
-                        loggingInfo.Merge(json,
+                        joMeta.Merge(json,
                             new JsonMergeSettings
                             {
                                 MergeArrayHandling = MergeArrayHandling.Union
                             });
                         // we have all we need
+
+                        if (loggingInfo["line"] == null) loggingInfo["line"] = "Json Output";
                         return;
                     }
                     catch (JsonReaderException)
                     {
                         // no JSON, handle it as plain string
+                        string onlyToJson = JsonConvert.SerializeObject(loggingEvent.MessageObject, new JsonSerializerSettings
+                        {
+                            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                        });
+
+                        if (loggingInfo["line"] == null) loggingInfo["line"] = onlyToJson;
                     }
                 }
 
@@ -177,15 +188,51 @@ namespace log4net.logdna
             {
                 loggingInfo["line"] = GetStringFormLog(renderedMessage);
             }
+            else if (loggingEvent.MessageObject is IDictionary moDic)
+            {
+                //if object is dictionary, then put them into meta
+                JObject tmpObj = new JObject();
+
+                foreach (DictionaryEntry currentDe in moDic)
+                {
+                    tmpObj.Add($"{currentDe.Key}", JsonConvert.SerializeObject(currentDe.Value));
+                }
+
+                if (moDic.Count > 0)
+                {
+                    //get meta data
+                    JObject joMeta = loggingInfo["meta"] as JObject;
+                    joMeta.Merge(tmpObj,
+                        new JsonMergeSettings
+                        {
+                            MergeArrayHandling = MergeArrayHandling.Union
+                        });
+                }
+
+                if (loggingInfo["line"] == null) loggingInfo["line"] = "Dictionary output";
+            }
+            else if (loggingEvent.MessageObject is IEnumerable moEnum)
+            {
+                // add issue: IEnumerable object => meta
+
+                string enumString = JsonConvert.SerializeObject(moEnum, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
+
+                loggingInfo["line"] = enumString;
+            }
             else
             {
                 // serialize object to JSON and add it's properties to loggingInfo
-                var json = JObject.FromObject(loggingEvent.MessageObject, _jsonSerializer);
-                loggingInfo.Merge(json,
-                    new JsonMergeSettings
-                    {
-                        MergeArrayHandling = MergeArrayHandling.Union
-                    });
+                //var json = JObject.FromObject(loggingEvent.MessageObject, _jsonSerializer);
+
+                string onlyToJson = JsonConvert.SerializeObject(loggingEvent.MessageObject, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
+
+                if (loggingInfo["line"] == null) loggingInfo["line"] = onlyToJson;
             }
         }
 
