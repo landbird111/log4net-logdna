@@ -41,19 +41,27 @@ namespace log4net.logdna
                 }
             }
 
-            string message = JsonConvert.SerializeObject(ingests,
-                new JsonSerializerSettings
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-                });
-
             int currentRetry = 0;
             // setting MaxSendRetries means that we retry forever, we never throw away logs without delivering them
             while (_isTokenValid && (_config.MaxSendRetries < 0 || currentRetry <= _config.MaxSendRetries))
             {
                 try
                 {
-                    SendToLogdna(message);
+                    System.Threading.Tasks.Parallel.ForEach(ingests.lines, itemLine =>
+                    {
+                        string message = JsonConvert.SerializeObject(itemLine,
+                            new JsonSerializerSettings
+                            {
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                            });
+
+                        StringBuilder lineSB = new StringBuilder();
+                        lineSB.Append("{\"lines\":[");
+                        lineSB.Append(message);
+                        lineSB.Append("]}");
+                        SendToLogdna($"{lineSB}");
+                    });
+
                     break;
                 }
                 catch (WebException e)
@@ -124,7 +132,7 @@ namespace log4net.logdna
                 sb.Append("&");
 #if NET40
                 sb.AppendFormat("tags={0}", WebUtility.HtmlEncode(config.Tag));
-                
+
 #elif NETSTANDARD2_0
                 sb.AppendFormat("tags={0}", System.Web.HttpUtility.UrlEncode(config.Tag));
 #endif

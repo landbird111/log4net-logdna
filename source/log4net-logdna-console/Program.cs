@@ -36,7 +36,8 @@ namespace log4net_logdna_console
             Thread thread = Thread.CurrentThread;
             thread.Name = "Main Thread";
             ThreadContext.Properties["MainThreadContext"] = "MainThreadContextValue";
-            log.Info("Thread test");
+
+            log.Info($"================ test start ================");
             log.Error("oops", new ArgumentOutOfRangeException("argArray"));
             log.Warn("hmmm", new ApplicationException("app exception"));
             log.Info("yawn");
@@ -177,6 +178,9 @@ namespace log4net_logdna_console
             //Json output
             log.Debug("{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.RunningTask>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.RunningTask\",\"No\":0,\"TaskId\":2567,\"Stake\":0,\"Stage\":\"FT\",\"ScoreType\":\"GOALS\",\"MarketType\":\"OU\",\"BetCount\":0,\"TaskMappings\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskMapping>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskMapping\",\"Website\":\"SINGBET\",\"League\":\"Arena Cup (In Croatia)\",\"GameTime\":\"2021-01-13T06:00:00\",\"HomeTeam\":\"NK Medimurje\",\"AwayTeam\":\"HNK Sibenik\",\"Choice\":\"\"}]},\"TaskLines\":null,\"BetSummaryList\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskBetSummary>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskBetSummary\",\"BetType\":\"UNDER\",\"Line\":3.5,\"ConfirmedStake\":287,\"PendingStake\":0,\"AveragePrice\":0.7}]}},{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.RunningTask\",\"No\":0,\"TaskId\":2569,\"Stake\":0,\"Stage\":\"FT\",\"ScoreType\":\"GOALS\",\"MarketType\":\"OU\",\"BetCount\":0,\"TaskMappings\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskMapping>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskMapping\",\"Website\":\"SINGBET\",\"League\":\"EFootball - Battle - 8 Mins Play\",\"GameTime\":\"2021-01-13T02:42:00\",\"HomeTeam\":\"Atalanta  Esports\",\"AwayTeam\":\"AC Milan  Esports\",\"Choice\":\"\"}]},\"TaskLines\":null,\"BetSummaryList\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskBetSummary>\",\"$values\":[]}},{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.RunningTask\",\"No\":0,\"TaskId\":2568,\"Stake\":0,\"Stage\":\"FT\",\"ScoreType\":\"GOALS\",\"MarketType\":\"OU\",\"BetCount\":0,\"TaskMappings\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskMapping>\",\"$values\":[{\"$type\":\"Eds.MessageQueue.Task.ValueObjects.TaskMapping\",\"Website\":\"SINGBET\",\"League\":\"EFootball - FIFA 21 CLA Europa League - 10 Mins Play\",\"GameTime\":\"2021-01-13T02:28:00\",\"HomeTeam\":\"AZ Alkmaar  Esports\",\"AwayTeam\":\"Celtic  Esports\",\"Choice\":\"\"}]},\"TaskLines\":null,\"BetSummaryList\":{\"$type\":\"System.Collections.Generic.List<Eds.MessageQueue.Task.ValueObjects.TaskBetSummary>\",\"$values\":[]}}]}");
 
+            log.Info("================ test end ================");
+
+            System.Threading.Thread.Sleep(500);
 
             log.Logger.Repository.Shutdown();
 

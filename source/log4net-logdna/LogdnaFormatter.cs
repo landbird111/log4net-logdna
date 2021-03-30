@@ -32,12 +32,13 @@ namespace log4net.logdna
             JObject loggingInfo = new JObject
             {
                 ["level"] = loggingEvent.Level?.DisplayName,
-                //["timestamp"] = loggingEvent.TimeStamp.ToString(@"yyyy -MM-ddTHH\:mm\:ss.fffzzz"),
+                ["timestamp"] = loggingEvent.TimeStamp,
                 ["meta"] = new JObject
                 {
                     ["process"] = _currentProcess.ProcessName,
                     ["threadName"] = loggingEvent.ThreadName,
-                    ["loggerName"] = loggingEvent.LoggerName
+                    ["loggerName"] = loggingEvent.LoggerName,
+                    ["timeStampDateString"] = $"{loggingEvent.TimeStamp:yyyy-MM-dd HH:mm:ss.fff}"
                 }
             };
 
@@ -149,19 +150,7 @@ namespace log4net.logdna
                     // try parse as JSON, otherwise use rendered message passed to this method
                     try
                     {
-                        //get meta data
-                        JObject joMeta = loggingInfo["meta"] as JObject;
-
-                        var json = JObject.Parse(messageString);
-                        joMeta.Merge(json,
-                            new JsonMergeSettings
-                            {
-                                MergeArrayHandling = MergeArrayHandling.Union
-                            });
-                        // we have all we need
-
-                        if (loggingInfo["line"] == null) loggingInfo["line"] = "Json Output";
-                        return;
+                        loggingInfo["line"] = GetStringFormLog(messageString);
                     }
                     catch (JsonReaderException)
                     {
@@ -171,12 +160,14 @@ namespace log4net.logdna
                             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                         });
 
-                        if (loggingInfo["line"] == null) loggingInfo["line"] = onlyToJson;
+                        loggingInfo["line"] = onlyToJson;
                     }
                 }
-
-                // plain string, use rendered message
-                loggingInfo["line"] = GetStringFormLog(renderedMessage);
+                else
+                {
+                    // plain string, use rendered message
+                    loggingInfo["line"] = GetStringFormLog(renderedMessage);
+                }
             }
             else if (loggingEvent.MessageObject == null
                     // log4net.Util.SystemStringFormat is object used when someone calls log.*Format(...)
@@ -190,37 +181,24 @@ namespace log4net.logdna
             }
             else if (loggingEvent.MessageObject is IDictionary moDic)
             {
-                //if object is dictionary, then put them into meta
-                JObject tmpObj = new JObject();
-
-                foreach (DictionaryEntry currentDe in moDic)
+                string dicToJson = JsonConvert.SerializeObject(moDic, new JsonSerializerSettings
                 {
-                    tmpObj.Add($"{currentDe.Key}", JsonConvert.SerializeObject(currentDe.Value));
-                }
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                });
 
                 if (moDic.Count > 0)
                 {
-                    //get meta data
-                    JObject joMeta = loggingInfo["meta"] as JObject;
-                    joMeta.Merge(tmpObj,
-                        new JsonMergeSettings
-                        {
-                            MergeArrayHandling = MergeArrayHandling.Union
-                        });
+                    loggingInfo["line"] = dicToJson;
                 }
-
-                if (loggingInfo["line"] == null) loggingInfo["line"] = "Dictionary output";
             }
             else if (loggingEvent.MessageObject is IEnumerable moEnum)
             {
-                // add issue: IEnumerable object => meta
-
                 string enumString = JsonConvert.SerializeObject(moEnum, new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 });
 
-                loggingInfo["line"] = enumString;
+                loggingInfo["line"] = GetStringFormLog(enumString);
             }
             else
             {
@@ -232,7 +210,7 @@ namespace log4net.logdna
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 });
 
-                if (loggingInfo["line"] == null) loggingInfo["line"] = onlyToJson;
+                loggingInfo["line"] = onlyToJson;
             }
         }
 
