@@ -4,16 +4,17 @@
     <DebugType>full</DebugType>
     <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <Authors>Reck</Authors>
     <Company></Company>
     <PackageLicenseUrl>http://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Product>Logdna</Product>
     <PackageProjectUrl>http://github.com/landbird111/log4net-logdna</PackageProjectUrl>
     <Description>Custom log4net Appender to send logs to Logdna</Description>
-    <PackageReleaseNotes>- add dictionary type detected and output result
-- add IEnumerable type detected and output result
-- fixed Json string output bug</PackageReleaseNotes>
+    <PackageReleaseNotes>- remove json string into meta data struct
+- remove IDictionary and IEnum into meta data struct
+- fixed timestamp error bug
+- use Parallel to send each line of the lines</PackageReleaseNotes>
     <Copyright>Copyright 2021</Copyright>
     <PackageTags>Logdna-log4net log4net appender logs</PackageTags>
     <RootNamespace>log4net.logdna</RootNamespace>
